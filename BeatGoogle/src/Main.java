@@ -4,17 +4,17 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		WebPage rootPage = new WebPage("http://soslab.nccu.edu.tw/Welcome.html", "Welcome");
+		WebPage rootPage = new WebPage("http://www.espn.com/search/results?q=NFL#gsc.tab=0&gsc.q=NFL.html", "espnNFL");
 		WebTree tree = new WebTree(rootPage);
-
-		tree.root.addChild(new WebNode(new WebPage("http://soslab.nccu.edu.tw/Welcome.html", "Project")));
-		tree.root.addChild(new WebNode(new WebPage("http://soslab.nccu.edu.tw/Publications.html", "Publication")));
-		tree.root.children.get(1).addChild(new WebNode(
-				new WebPage("https://scholar.google.com/citations?user=IpxUy-YAAAAJ&hl=en", "Google Scholar")));
-		tree.root.children.get(1)
-				.addChild(new WebNode(new WebPage("https://dblp.uni-trier.de/pers/hd/y/Yu:Fang.html", "DBLP")));
-		tree.root.addChild(new WebNode(new WebPage("http://soslab.nccu.edu.tw/Members.html", "Member")));
-		tree.root.addChild(new WebNode(new WebPage("http://soslab.nccu.edu.tw/Courses.html", "Course")));
+		tree.root.addChild(new WebNode(new WebPage("https://www.foxnews.com/category/sports/nfl.html", "foxNews")));
+		tree.root.addChild(new WebNode(new WebPage("https://www.bbc.co.uk/search?q=nfl&filter=sport&suggid=.html", "bbc")));
+		tree.root.addChild(new WebNode(new WebPage("http://www.espn.com/search/results?q=NFL#gsc.tab=0&gsc.q=NFL.html", "espnNFL")));
+		
+		/*
+		 * tree.root.children.get(1).addChild(new WebNode( new WebPage(
+		 * "https://scholar.google.com/citations?user=IpxUy-YAAAAJ&hl=en",
+		 * "Google Scholar")));
+		 */
 
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine()) {
@@ -33,4 +33,5 @@ public class Main {
 		}
 		sc.close();
 	}
+
 }
