@@ -5,11 +5,11 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class WordCounter {
+public class KeywordCounter {
 	private String urlStr;
 	private String content;
 
-	public WordCounter(String urlStr) {
+	public KeywordCounter(String urlStr) {
 		this.urlStr = urlStr;
 	}
 
