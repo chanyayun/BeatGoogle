@@ -54,7 +54,6 @@ public class Keyword {
 }
 
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -138,60 +137,60 @@ public class WebPage {
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class WebList {
-	public ArrayList<WebPage> list;
+public class WebNewsList {
+	public ArrayList<WebPage> newsList;
 	public WebPage webPage;
-	
-	public WebList() {
-		this.list = new ArrayList<>();
-		WebPage espn = new WebPage("http://www.espn.com/search/results?q=NFL#gsc.tab=0&gsc.q=NFL.html", "espnNFL");
-		list.add(espn);
+
+	public WebNewsList() {
+		newsList = new ArrayList<>();
 		WebPage foxNews = new WebPage("https://www.foxnews.com/category/sports/nfl.html", "foxNews");
-		list.add(foxNews);
-		WebPage bbc = new WebPage("https://www.bbc.co.uk/search?q=nfl&filter=sport&suggid=.html", "bbc");
-		list.add(bbc);
-		WebPage ex = new WebPage("http://www.example.com", "ex");
-		list.add(ex);
-		WebPage so = new WebPage("http://soslab.nccu.edu.tw/Courses.html", "so");
-		list.add(so);
+		newsList.add(foxNews);
+		WebPage bbcSports = new WebPage("https://www.bbc.co.uk/search?q=nfl&filter=sport&suggid=.html", "bbcSports");
+		newsList.add(bbcSports);
+		WebPage espnNFL = new WebPage("http://www.espn.com/search/results?q=NFL#gsc.tab=0&gsc.q=NFL.html", "espnNFL");
+		newsList.add(espnNFL);
+		WebPage example = new WebPage("http://www.example.com", "example");
+		newsList.add(example);
+		WebPage soslab = new WebPage("http://soslab.nccu.edu.tw/Courses.html", "soslab");
+		newsList.add(soslab);
 	}
 
 	public void setAllScore(ArrayList<Keyword> keywords) throws IOException {
-		for(int i = 0 ; i < list.size() ; i++){
-		list.get(i).setScore(keywords);
+		for (int i = 0; i < newsList.size(); i++) {
+			newsList.get(i).setScore(keywords);
 		}
 	}
 
 	public void sort() {
-		this.list = doQuickSort(this.list);
+		newsList = doQuickSort(newsList);
 
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < this.list.size(); i++) {
-			WebPage page = this.list.get(i);
+		for (int i = 0; i < newsList.size(); i++) {
+			WebPage pages = newsList.get(i);
 
 			if (i > 0) {
 				sb.append("");
 			}
-			sb.append(page.toString());
+			sb.append(pages.toString());
 		}
 		System.out.println(sb.toString());
 	}
 
-	private ArrayList<WebPage> doQuickSort(ArrayList<WebPage> li) {
-		if (li.size() < 2) {
-			return li;
+	private ArrayList<WebPage> doQuickSort(ArrayList<WebPage> list) {
+		if (list.size() < 2) {
+			return list;
 		}
+
 		ArrayList<WebPage> result = new ArrayList<>();
-
-		int pivotIndex = li.size() / 2;
-		WebPage pivotPage = li.get(pivotIndex);
-
 		ArrayList<WebPage> lessList = new ArrayList<>();
 		ArrayList<WebPage> equalList = new ArrayList<>();
 		ArrayList<WebPage> greatList = new ArrayList<>();
 
-		for (int i = 0; i < li.size(); i++) {
-			WebPage p = li.get(i);
+		int pivotIndex = list.size() / 2;
+		WebPage pivotPage = list.get(pivotIndex);
+
+		for (int i = 0; i < list.size(); i++) {
+			WebPage p = list.get(i);
 
 			if (p.score > pivotPage.score) {
 				greatList.add(p);
@@ -206,7 +205,141 @@ public class WebList {
 		result.addAll(equalList);
 		result.addAll(doQuickSort(lessList));
 
+		if (result.size() > 10) {
+			result = (ArrayList<WebPage>) result.subList(0, 9);
+		}
 		return result;
+	}
+}
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class WebVideoList {
+	public ArrayList<WebPage> videoList;
+	public WebPage webPage;
+
+	public WebVideoList(String kind) {
+		videoList = new ArrayList<>();
+		switch (kind) {
+		case "NBA":
+			WebPage nbaVedio = new WebPage("https://www.youtube.com/user/NBA/videos.html", "nbaVedio");
+			videoList.add(nbaVedio);
+			break;
+
+		case "MLB":
+			WebPage mlbVedio = new WebPage("https://www.youtube.com/user/MLB/videos.html", "mlbVedio");
+			videoList.add(mlbVedio);
+			break;
+
+		case "NFL":
+			WebPage nflVideo = new WebPage("https://www.youtube.com/user/NFL/videos.html", "nflVideo");
+			videoList.add(nflVideo);
+			break;
+
+		case "NHL":
+			WebPage nhlVideo = new WebPage("https://www.youtube.com/user/NHLVideo/videos.html", "nhlVideo");
+			videoList.add(nhlVideo);
+			break;
+
+		case "PGA":
+			WebPage pgaVideo = new WebPage("https://www.youtube.com/user/pgatour/videos.html", "pgaVideo");
+			videoList.add(pgaVideo);
+			break;
+
+		case "Soccer":
+			WebPage soccerVideo = new WebPage("https://www.youtube.com/results?search_query=soccer.html", "soccerVideo");
+			videoList.add(soccerVideo);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	public void setAllScore(ArrayList<Keyword> keywords) throws IOException {
+		for (int i = 0; i < videoList.size(); i++) {
+			videoList.get(i).setScore(keywords);
+		}
+	}
+
+	public void sort() {
+		videoList = doQuickSort(videoList);
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < videoList.size(); i++) {
+			WebPage pages = videoList.get(i);
+
+			if (i > 0) {
+				sb.append("");
+			}
+			sb.append(pages.toString());
+		}
+		System.out.println(sb.toString());
+	}
+
+	private ArrayList<WebPage> doQuickSort(ArrayList<WebPage> list) {
+		if (list.size() < 2) {
+			return list;
+		}
+
+		ArrayList<WebPage> result = new ArrayList<>();
+		ArrayList<WebPage> lessList = new ArrayList<>();
+		ArrayList<WebPage> equalList = new ArrayList<>();
+		ArrayList<WebPage> greatList = new ArrayList<>();
+
+		int pivotIndex = list.size() / 2;
+		WebPage pivotPage = list.get(pivotIndex);
+
+		for (int i = 0; i < list.size(); i++) {
+			WebPage p = list.get(i);
+
+			if (p.score > pivotPage.score) {
+				greatList.add(p);
+			} else if (p.score < pivotPage.score) {
+				lessList.add(p);
+			} else {
+				equalList.add(p);
+			}
+		}
+
+		result.addAll(doQuickSort(greatList));
+		result.addAll(equalList);
+		result.addAll(doQuickSort(lessList));
+
+		if (result.size() > 5) {
+			result = (ArrayList<WebPage>) result.subList(0, 4);
+		}
+		return result;
+	}
+}
+
+
+public class GameScoreList {
+	public GameScoreList(String kind) {
+		switch (kind) {
+		case "NBA":
+			break;
+
+		case "MLB":
+			break;
+
+		case "NFL":
+			break;
+
+		case "NHL":
+			break;
+
+		case "PGA":
+			break;
+
+		case "Soccer":
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
@@ -217,17 +350,20 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		WebList web = new WebList();
-
+		double weight = 10;
+		String kind = null;
+		Keyword k = null;
+		
 		System.out.println("Enter numOfKeyword, kind, keyword(s):");
+
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine()) {
 			ArrayList<Keyword> keywords = new ArrayList<>();
+
 			int numOfKeyword = sc.nextInt();
 
-			double weight = 10;
-			String kind = sc.next();
-			Keyword k = null;
+			kind = sc.next();
+
 			if (numOfKeyword == 1) {
 				String name = sc.next();
 				k = new Keyword(name, weight, kind);
@@ -240,10 +376,18 @@ public class Main {
 				}
 			}
 
+			WebNewsList web = new WebNewsList();
+			WebVideoList video = new WebVideoList(kind);
+
 			web.setAllScore(keywords);
+			System.out.println("News:");
 			web.sort();
+
+			video.setAllScore(keywords);
+			System.out.println("Videos:");
+			video.sort();
 		}
+
 		sc.close();
 	}
-
 }
