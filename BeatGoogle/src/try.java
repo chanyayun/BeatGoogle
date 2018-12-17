@@ -143,11 +143,11 @@ public class WebNewsList {
 
 	public WebNewsList() {
 		newsList = new ArrayList<>();
-		WebPage foxNews = new WebPage("https://www.foxnews.com/category/sports/nfl.html", "foxNews");
+		WebPage foxNews = new WebPage("http://www.sportingnews.com/us/nfl", "sportingNewsNFL");
 		newsList.add(foxNews);
-		WebPage bbcSports = new WebPage("https://www.bbc.co.uk/search?q=nfl&filter=sport&suggid=.html", "bbcSports");
+		WebPage bbcSports = new WebPage("https://bleacherreport.com/nfl", "BrNFL");
 		newsList.add(bbcSports);
-		WebPage espnNFL = new WebPage("http://www.espn.com/search/results?q=NFL#gsc.tab=0&gsc.q=NFL.html", "espnNFL");
+		WebPage espnNFL = new WebPage("http://www.espn.com/nfl/", "espnNFL");
 		newsList.add(espnNFL);
 		WebPage example = new WebPage("http://www.example.com", "example");
 		newsList.add(example);
