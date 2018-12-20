@@ -15,6 +15,7 @@ public class Main {
 		 * "https://scholar.google.com/citations?user=IpxUy-YAAAAJ&hl=en",
 		 * "Google Scholar")));
 		 */
+		System.out.println("this is a useless line");
 
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine()) {
