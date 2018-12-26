@@ -464,7 +464,7 @@ public class HtmlMatcherV {
 		int indexOfHtml = -1;
 		int indexOfHtmlClose = -1;
 
-		this.urlStr = "https://www.youtube.com/user/NBA/videos.html";
+		this.urlStr = "https://www.youtube.com/user/NBA/videos";
 		if (content == null) {
 			content = fetchContent();
 		}
@@ -478,7 +478,7 @@ public class HtmlMatcherV {
 		int indexOfHtml = -1;
 		int indexOfHtmlClose = -1;
 
-		this.urlStr = "https://www.youtube.com/user/MLB/videos.html";
+		this.urlStr = "https://www.youtube.com/user/MLB/videos";
 		if (content == null) {
 			content = fetchContent();
 		}
@@ -489,29 +489,23 @@ public class HtmlMatcherV {
 	public ArrayList<WebPage> addNFLMatch() throws IOException {
 		webV = new ArrayList<>();
 		int indexOfOpen = 0;
-		int indexOfTitle = -1;
-		int indexOfTitleClose = -1;
 		int indexOfHtml = -1;
 		int indexOfHtmlClose = -1;
 
-		this.urlStr = "https://www.youtube.com/user/NFL/videos.html";
+		this.urlStr = "https://www.youtube.com/user/NFL/videos";
 		if (content == null) {
 			content = fetchContent();
 		}
-//		indexOfOpen = content.indexOf("style-scope ytd-grid-renderer", indexOfOpen);
-//		indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-//		for (int i = 0; i < 10; i++) {
-//			indexOfOpen = content.indexOf("style-scope ytd-grid-renderer", indexOfHtmlClose);
-//			indexOfOpen = content.indexOf("video-title", indexOfOpen);
-//			//indexOfTitle = content.indexOf("title=", indexOfOpen) + 7;
-//			indexOfHtml = content.indexOf("href=", indexOfOpen);
-//			//indexOfTitleClose = indexOfHtml - 2;
-//			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-//			// search whether title contains keyword and then decide whether send the html
-//			//no need to count keyword in the html
-//			String html = "https://www.youtube.com" + content.substring(indexOfHtml + 6, indexOfHtmlClose);
-//			webV.add(new WebPage(html, "foxNFLnews"));
-//		}
+		indexOfOpen = content.indexOf("style-scope ytd-grid-renderer", indexOfOpen);
+		indexOfHtmlClose = content.indexOf(">", indexOfOpen);
+		for (int i = 0; i < 10; i++) {
+			indexOfOpen = content.indexOf("ytd-grid-video-renderer", indexOfHtmlClose);
+			indexOfOpen = content.indexOf("video-title", indexOfOpen);
+			indexOfHtml = content.indexOf("href=", indexOfOpen);
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
+			String html = "https://www.youtube.com" + content.substring(indexOfHtml + 6, indexOfHtmlClose);
+			webV.add(new WebPage(html, "NFLvideos"));
+		}
 		return webV;
 	}
 
@@ -521,7 +515,7 @@ public class HtmlMatcherV {
 		int indexOfHtml = -1;
 		int indexOfHtmlClose = -1;
 
-		this.urlStr = "https://www.youtube.com/user/NHLVideo/videos.html";
+		this.urlStr = "https://www.youtube.com/user/NHLVideo/videos";
 		if (content == null) {
 			content = fetchContent();
 		}
