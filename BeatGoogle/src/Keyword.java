@@ -1,14 +1,22 @@
+import java.util.ArrayList;
+
 public class Keyword {
 	public String name;
 	public double weight;
+	public String kind;
+	public ArrayList<Keyword> keywords;
 
-	public Keyword(String name, double weight) {
+	public Keyword() {	
+		keywords = new ArrayList<>();
+	}
+	
+	public Keyword(String name, double weight, String kind) {
 		this.name = name;
 		this.weight = weight;
+		this.kind = kind;
 	}
 
-	@Override
-	public String toString() {
-		return "[" + name + ", " + weight + "]";
+	public void addKeyword(Keyword k) {
+		keywords.add(k);
 	}
 }
