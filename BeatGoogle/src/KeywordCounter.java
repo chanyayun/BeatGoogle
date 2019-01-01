@@ -6,15 +6,15 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class KeywordCounter {
-	private String urlStr;
+	private String url;
 	private String content;
 
-	public KeywordCounter(String urlStr) {
-		this.urlStr = urlStr;
+	public KeywordCounter(String url) {
+		this.url = url;
 	}
 
 	private String fetchContent() throws IOException {
-		URL url = new URL(this.urlStr);
+		URL url = new URL(this.url);
 		URLConnection conn = url.openConnection();
 		InputStream in = conn.getInputStream();
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -23,13 +23,13 @@ public class KeywordCounter {
 		String line = null;
 
 		while ((line = br.readLine()) != null) {
-			retVal = retVal + line + "\n";
+			retVal += line;
 		}
 
 		return retVal;
 	}
 
-	public int countKeyword(String keyword) throws IOException{
+	public int countKeyword(String keyword) throws IOException {
 		if (content == null) {
 			content = fetchContent();
 		}
