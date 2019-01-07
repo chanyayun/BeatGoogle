@@ -14,20 +14,26 @@ public class WebPage {
 	}
 
 	public void setScore(ArrayList<Keyword> keywords) {
-		this.score = 0;
+		  this.score = 0;
 
-		try {
-			for (Keyword k : keywords) {
-				if (name.contains("news")) {
-					this.score += counter.countKeyword(k.name) * k.weight * 5;
-				} else {
-					this.score += counter.countKeyword(k.name) * k.weight;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+		  try {
+		   for (Keyword k : keywords) {
+		    if (url.length() > 50) {
+		     this.score += counter.countKeyword(k.name) * k.weight * 8;
+		     if (url.contains("sportingnews")) {
+		      this.score *= 0.5;
+		     }
+		      else if (url.contains("foxnews")) {
+		      this.score *= 0.8;
+		     }
+		    } else {
+		     this.score += counter.countKeyword(k.name) * k.weight;
+		    }
+		   }
+		  } catch (IOException e) {
+		   e.printStackTrace();
+		  }
+		 }
 
 	@Override
 	public String toString() {
