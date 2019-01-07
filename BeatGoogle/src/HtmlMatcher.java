@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,31 +15,37 @@ public class HtmlMatcher {
 	private String url;
 	private String content;
 	private String searchKeyword;
+	private String searchKeyword2;
 	public static ArrayList<WebPage> web;
+	public static String relatedKeyword = "Relative keywords: \n";
 
 	public HtmlMatcher(String kind, String searchKeyword) throws IOException {
-		this.searchKeyword = searchKeyword;
-
+		this.searchKeyword2 = searchKeyword;
 		web = new ArrayList<>();
-
-		query();
 
 		switch (kind) {
 		case "NBA":
+			this.searchKeyword = searchKeyword + "+NBA+news";
 			nbaMatch();
 			break;
 		case "MLB":
+			this.searchKeyword = searchKeyword + "+MLB+news";
 			mlbMatch();
 			break;
 		case "NFL":
+			this.searchKeyword = searchKeyword + "+NFL+news";
 			nflMatch();
 			break;
 		case "NHL":
+			this.searchKeyword = searchKeyword + "+NHL+news";
 			nhlMatch();
 			break;
 		default:
+			this.searchKeyword = searchKeyword + "+sport+news";
 			break;
 		}
+		query();
+		fetchRelatedKeyword();
 	}
 
 	private String fetchContent() throws IOException {
@@ -62,10 +69,8 @@ public class HtmlMatcher {
 	}
 
 	public void query() throws IOException {
-		this.url = "https://www.google.com.tw/search?q=" + searchKeyword + "&oe=utf8num=30";
-		if (this.content == null) {
-			this.content = fetchContent();
-		}
+		this.url = "https://www.google.com.tw/search?q=" + searchKeyword + "&oe=utf8num=15";
+		this.content = fetchContent();
 
 		Document document = Jsoup.parse(this.content);
 		Elements lis = document.select("div.g");
@@ -80,44 +85,29 @@ public class HtmlMatcher {
 			} catch (IndexOutOfBoundsException e) {
 			}
 		}
+
 	}
 
 	public void nbaMatch() throws IOException {
-//		this.url = "http://www.sportingnews.com/ca/nba/news";	
-//		if (this.content == null) {
-//			this.content = fetchContent();
-//		}
-//		
-//		Document document = Jsoup.parse(this.content);
-//		Elements lis = document.select("li.media");
-//		for (Element li : lis) {
-//			try {
-//				String citeUrl = "http://www.sportingnews.com" + li.attr("abs:href");
-//				Element h3 = li.select("h3.r").get(0);
-//				String title = h3.text();
-//
-//				web.add(new WebPage(citeUrl, title));
-//			} catch (IndexOutOfBoundsException e) {
-//			}
-//		}
-
 		this.url = "https://www.foxnews.com/category/sports/nba.html";
-		if (content == null) {
-			content = fetchContent();
-		}
+		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
+		int indexOfTitleClose = -1;
 		String html = null;
+		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose).contains("video")) {
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
 				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, "foxNBAnews"));
+				web.add(new WebPage(html, title));
 			}
 		}
 
@@ -129,30 +119,34 @@ public class HtmlMatcher {
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			web.add(new WebPage(html, "sportingnewsNBAnews"));
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			web.add(new WebPage(html, title));
 		}
 	}
 
 	public void mlbMatch() throws IOException {
 		this.url = "https://www.foxnews.com/category/sports/mlb.html";
-		if (content == null) {
-			content = fetchContent();
-		}
+		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
+		int indexOfTitleClose = -1;
 		String html = null;
+		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose).contains("video")) {
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
 				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, "foxMLBnews"));
+				web.add(new WebPage(html, title));
 			}
 		}
 
@@ -164,30 +158,34 @@ public class HtmlMatcher {
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			web.add(new WebPage(html, "sportingnewsMLBnews"));
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			web.add(new WebPage(html, title));
 		}
 	}
 
 	public void nflMatch() throws IOException {
 		this.url = "https://www.foxnews.com/category/sports/nfl.html";
-		if (content == null) {
-			content = fetchContent();
-		}
+		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
+		int indexOfTitleClose = -1;
 		String html = null;
+		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose).contains("video")) {
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
 				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, "foxNFLnews"));
+				web.add(new WebPage(html, title));
 			}
 		}
 
@@ -199,30 +197,34 @@ public class HtmlMatcher {
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			web.add(new WebPage(html, "sportingnewsNFLnews"));
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			web.add(new WebPage(html, title));
 		}
 	}
 
 	public void nhlMatch() throws IOException {
 		this.url = "https://www.foxnews.com/category/sports/nhl.html";
-		if (content == null) {
-			content = fetchContent();
-		}
+		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
+		int indexOfTitleClose = -1;
 		String html = null;
+		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose).contains("video")) {
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
 				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, "foxNHLnews"));
+				web.add(new WebPage(html, title));
 			}
 		}
 
@@ -234,9 +236,34 @@ public class HtmlMatcher {
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml) - 1;
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose);
-			web.add(new WebPage(html, "sportingnewsNHLnews"));
+			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
+			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+			web.add(new WebPage(html, title));
+		}
+	}
+
+	public void fetchRelatedKeyword() throws IOException {
+		this.url = "https://www.google.com.tw/search?q=" + searchKeyword2 + "&oe=utf8num=30";
+		content = fetchContent();
+		int indexOfOpen = content.indexOf("clear:");
+		if (indexOfOpen == -1) {
+			relatedKeyword = relatedKeyword + "(Not Found) \n";
+		} else {
+			int indexOfHtmlClose = -1;
+			int indexOfHtml = -1;
+			int indexOfTitleClose = -1;
+			String title = "";
+			indexOfHtmlClose = content.indexOf(">", indexOfOpen);
+			System.out.print("/");
+			for (int i = 0; i < 4; i++) {
+				indexOfHtml = content.indexOf("a href=", indexOfHtmlClose);
+				indexOfHtmlClose = content.indexOf(">", indexOfHtml);
+				indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
+				title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
+				relatedKeyword = relatedKeyword + title + "\n";
+			}
 		}
 	}
 }
