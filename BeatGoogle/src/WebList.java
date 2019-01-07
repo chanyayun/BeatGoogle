@@ -1,17 +1,20 @@
- import java.io.IOException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class WebList {
 	public WebNode root;
+	public ArrayList<String> subPages;
 	public ArrayList<WebPage> webList;
 
 	public WebList(ArrayList<Keyword> keywords) throws IOException {
 		webList = new ArrayList<>();
+		subPages = new ArrayList<>();
 
 		for (int i = 0; i < HtmlMatcher.web.size(); i++) {
 			webList.add(HtmlMatcher.web.get(i));
 			this.root = new WebNode(HtmlMatcher.web.get(i));
 			setAllScore(root, keywords);
+			subPages.add(root.subPage);
 		}
 	}
 
@@ -19,19 +22,15 @@ public class WebList {
 		startNode.setNodeScore(keywords);
 	}
 
-	//15個最相關
 	public String sort() {
 		webList = doQuickSort(webList);
 
 		StringBuilder sb = new StringBuilder();
-		WebPage page = null;
 		for (int i = 0; i < webList.size() && i < 15; i++) {
-			page = webList.get(i);
-
 			if (i > 0) {
 				sb.append("");
 			}
-			sb.append(page.toString());
+			sb.append(webList.get(i).toString() + subPages.get(i) + "\n");
 		}
 		return sb.toString();
 	}
