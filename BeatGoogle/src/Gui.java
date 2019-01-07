@@ -1,269 +1,242 @@
-import java.io.BufferedReader;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
 
-public class HtmlMatcher {
-	private String url;
-	private String content;
-	private String searchKeyword;
-	private String searchKeyword2;
-	public static ArrayList<WebPage> web;
-	public static String relatedKeyword = "Relative keywords: \n";
+public class Gui extends JFrame implements ActionListener {
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextArea areaContent;
+	private String buttonString;
+	private static final Color purple = new Color(72, 61, 139);
+	private static final double weight = 20;
+	private static final double weight2 = 2;
+	public Keyword keyword;
+	public ArrayList<Keyword> keywords;
+	public JButton btnSearch = new JButton("Search");
+	public JTextField textField = new JTextField();
+	private JScrollPane scrollPane;
+	private JPanel wholePane;
 
-	public HtmlMatcher(String kind, String searchKeyword) throws IOException {
-		this.searchKeyword2 = searchKeyword;
-		web = new ArrayList<>();
-
-		switch (kind) {
-		case "NBA":
-			this.searchKeyword = searchKeyword + "+NBA+news";
-			nbaMatch();
-			break;
-		case "MLB":
-			this.searchKeyword = searchKeyword + "+MLB+news";
-			mlbMatch();
-			break;
-		case "NFL":
-			this.searchKeyword = searchKeyword + "+NFL+news";
-			nflMatch();
-			break;
-		case "NHL":
-			this.searchKeyword = searchKeyword + "+NHL+news";
-			nhlMatch();
-			break;
-		default:
-			this.searchKeyword = searchKeyword + "+sport+news";
-			break;
-		}
-		query();
-		fetchRelatedKeyword();
-	}
-
-	private String fetchContent() throws IOException {
-		URL url = new URL(this.url);
-		URLConnection conn = url.openConnection();
-		conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; zh-TW; rv:1.9.1.2) "
-				+ "Gecko/20090729 Firefox/3.5.2 GTB5 (.NET CLR 3.5.30729)");
-		conn.connect();
-		InputStream in = conn.getInputStream();
-		InputStreamReader ir = new InputStreamReader(in, "UTF8");
-		BufferedReader br = new BufferedReader(ir);
-
-		String retVal = "";
-		String line = null;
-
-		while ((line = br.readLine()) != null) {
-			retVal += line;
-		}
-
-		return retVal;
-	}
-
-	public void query() throws IOException {
-		this.url = "https://www.google.com.tw/search?q=" + searchKeyword + "&oe=utf8num=15";
-		this.content = fetchContent();
-
-		Document document = Jsoup.parse(this.content);
-		Elements lis = document.select("div.g");
-		for (Element li : lis) {
-			try {
-				Element cite = li.select("cite").get(0);
-				String citeUrl = cite.text();
-				Element h3 = li.select("h3.r").get(0);
-				String title = h3.text();
-
-				web.add(new WebPage(citeUrl, title));
-			} catch (IndexOutOfBoundsException e) {
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Gui frame = new Gui();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-		}
-
+		});
 	}
 
-	public void nbaMatch() throws IOException {
-		this.url = "https://www.foxnews.com/category/sports/nba.html";
-		content = fetchContent();
+	public Gui() throws IOException {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 800, 600);
+		contentPane = new JPanel();
+		contentPane.setBackground(Color.PINK);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
 
-		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
-		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		int indexOfHtml = -1;
-		int indexOfTitleClose = -1;
-		String html = null;
-		String title = null;
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
-				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, title));
+		final JButton btnNba = new JButton("NBA");
+		btnNba.setForeground(purple);
+		btnNba.setBounds(350, 360, 55, 30);
+
+		final JButton btnMlb = new JButton("MLB");
+		btnMlb.setForeground(purple);
+		btnMlb.setBounds(405, 360, 55, 30);
+
+		final JButton btnNfl = new JButton("NFL");
+		btnNfl.setForeground(purple);
+		btnNfl.setBounds(460, 360, 55, 30);
+
+		final JButton btnNhl = new JButton("NHL");
+		btnNhl.setForeground(purple);
+		btnNhl.setBounds(515, 360, 55, 30);
+
+		buttonString = "";
+		btnNba.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonString = "NBA";
+				btnNba.setForeground(Color.RED);
+				btnMlb.setForeground(purple);
+				btnNfl.setForeground(purple);
+				btnNhl.setForeground(purple);
 			}
-		}
+		});
+		contentPane.add(btnNba);
 
-		this.url = "http://www.sportingnews.com/ca/nba/news";
-		content = fetchContent();
-
-		indexOfOpen = content.indexOf("latest-news-module module infinite");
-		indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			web.add(new WebPage(html, title));
-		}
-	}
-
-	public void mlbMatch() throws IOException {
-		this.url = "https://www.foxnews.com/category/sports/mlb.html";
-		content = fetchContent();
-
-		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
-		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		int indexOfHtml = -1;
-		int indexOfTitleClose = -1;
-		String html = null;
-		String title = null;
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
-				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, title));
+		btnMlb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonString = "MLB";
+				btnMlb.setForeground(Color.RED);
+				btnNba.setForeground(purple);
+				btnNfl.setForeground(purple);
+				btnNhl.setForeground(purple);
 			}
-		}
+		});
+		contentPane.add(btnMlb);
 
-		this.url = "http://www.sportingnews.com/ca/mlb/news";
-		content = fetchContent();
-
-		indexOfOpen = content.indexOf("latest-news-module module infinite");
-		indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			web.add(new WebPage(html, title));
-		}
-	}
-
-	public void nflMatch() throws IOException {
-		this.url = "https://www.foxnews.com/category/sports/nfl.html";
-		content = fetchContent();
-
-		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
-		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		int indexOfHtml = -1;
-		int indexOfTitleClose = -1;
-		String html = null;
-		String title = null;
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
-				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, title));
+		btnNfl.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonString = "NFL";
+				btnNfl.setForeground(Color.RED);
+				btnNba.setForeground(purple);
+				btnMlb.setForeground(purple);
+				btnNhl.setForeground(purple);
 			}
-		}
+		});
+		contentPane.add(btnNfl);
 
-		this.url = "http://www.sportingnews.com/ca/nfl/news";
-		content = fetchContent();
-
-		indexOfOpen = content.indexOf("latest-news-module module infinite");
-		indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			web.add(new WebPage(html, title));
-		}
-	}
-
-	public void nhlMatch() throws IOException {
-		this.url = "https://www.foxnews.com/category/sports/nhl.html";
-		content = fetchContent();
-
-		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
-		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		int indexOfHtml = -1;
-		int indexOfTitleClose = -1;
-		String html = null;
-		String title = null;
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			if (!content.substring(indexOfHtml + 8, indexOfHtmlClose - 1).contains("video")) {
-				html = "https://www.foxnews.com" + html;
-				web.add(new WebPage(html, title));
+		btnNhl.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonString = "NHL";
+				btnNhl.setForeground(Color.RED);
+				btnNba.setForeground(purple);
+				btnMlb.setForeground(purple);
+				btnNfl.setForeground(purple);
 			}
-		}
+		});
+		contentPane.add(btnNhl);
+		contentPane.setLayout(null);
 
-		this.url = "http://www.sportingnews.com/ca/nhl/news";
-		content = fetchContent();
+		textField.setBounds(350, 330, 220, 30);
+		contentPane.add(textField);
+		textField.setColumns(10);
 
-		indexOfOpen = content.indexOf("latest-news-module module infinite");
-		indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-		for (int i = 0; i < 10; i++) {
-			indexOfOpen = content.indexOf("media-heading", indexOfHtmlClose);
-			indexOfHtml = content.indexOf("a href=", indexOfOpen);
-			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-			html = "http://www.sportingnews.com" + content.substring(indexOfHtml + 8, indexOfHtmlClose - 1);
-			title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-			web.add(new WebPage(html, title));
-		}
+		JLabel lblBallballgo = new JLabel("BallBallGO!");
+		lblBallballgo.setFont(new Font("Corsiva Hebrew", Font.PLAIN, 24));
+		lblBallballgo.setForeground(Color.WHITE);
+		lblBallballgo.setBounds(395, 305, 135, 30);
+		contentPane.add(lblBallballgo);
+
+		btnSearch.setBounds(570, 330, 75, 30);
+		contentPane.add(btnSearch);
+		btnSearch.addActionListener(this);
+
 	}
 
-	public void fetchRelatedKeyword() throws IOException {
-		this.url = "https://www.google.com.tw/search?q=" + searchKeyword2 + "&oe=utf8num=30";
-		content = fetchContent();
-		int indexOfOpen = content.indexOf("clear:");
-		if (indexOfOpen == -1) {
-			relatedKeyword = relatedKeyword + "(Not Found) \n";
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+
+		/*
+		 * JScrollPane scrollPane = new JScrollPane( areaContent,
+		 * ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+		 * ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		 * 
+		 * this.getContentPane().removeAll(); this.getContentPane().add(scrollPane);
+		 * 
+		 * scrollPane.getVerticalScrollBar().setBackground(purple);
+		 * scrollPane.getViewport().setBackground(Color.PINK);
+		 * setContentPane(scrollPane); setVisible(true);
+		 * 
+		 * btnSearch.setBounds(240, 10, 75, 30); scrollPane.add(btnSearch);
+		 * 
+		 * textField.setBounds(10, 13, 220, 20); scrollPane.add(textField);
+		 * textField.setColumns(10);
+		 * 
+		 * areaContent = new JTextArea(); areaContent.setBounds(10, 60, 1190, 740);
+		 * areaContent.setBackground(Color.PINK); areaContent.setLineWrap(true);
+		 * scrollPane.add(areaContent); areaContent.setColumns(10);
+		 * 
+		 * scrollPane.updateUI();
+		 */
+
+		keyword = new Keyword();
+		keywords = new ArrayList<>();
+		String input = textField.getText();
+		int m = input.indexOf(" ");
+		String input1 = input;
+		String input2 = "";
+		String text = "";
+
+		// 擷取關鍵字
+		if (!input.isEmpty()) {
+			while (input1.contains(" ")) {
+				m = input1.indexOf(" ");
+				input2 = input1.substring(m + 1, input1.length());
+				input1 = input1.substring(0, m);
+
+				keyword.addKeyword(new Keyword(input1, weight, buttonString));
+				text = text + "+" + input1;
+
+				input1 = input2;
+			}
+			keyword.addKeyword(new Keyword(input1, weight, buttonString));
+			text = text + "+" + input1;
+		}
+		// 有按按鈕
+		if (buttonString != "") {
+			keyword.addKeyword(new Keyword(buttonString, weight2, buttonString));
 		} else {
-			int indexOfHtmlClose = -1;
-			int indexOfHtml = -1;
-			int indexOfTitleClose = -1;
-			String title = "";
-			indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-			System.out.print("/");
-			for (int i = 0; i < 4; i++) {
-				indexOfHtml = content.indexOf("a href=", indexOfHtmlClose);
-				indexOfHtmlClose = content.indexOf(">", indexOfHtml);
-				indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
-				title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-				relatedKeyword = relatedKeyword + title + "\n";
-			}
+			// 沒按按鈕直接加關鍵字
+			keyword.addKeyword(new Keyword("sport", weight2, buttonString));
 		}
+
+		keywords = keyword.keywords;
+		// 建list(google結果＋內建結果
+		try {
+			new HtmlMatcher(buttonString, text);
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+
+		// 新聞網站算分數
+		WebList news = null;
+		try {
+			news = new WebList(keywords);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		areaContent = new JTextArea();
+		areaContent.setBackground(Color.PINK);
+		areaContent.setLineWrap(true);
+		areaContent.setColumns(10);
+
+		areaContent.setText(HtmlMatcher.relatedKeyword + "\n" + "Suggest Results: \n" + news.sort());
+
+		wholePane = new JPanel();
+		wholePane.setLayout(new BorderLayout());
+		wholePane.setBounds(100, 100, 800, 600);
+		this.setContentPane(wholePane);
+
+		contentPane = new JPanel();
+
+		textField.setColumns(10);
+		contentPane.add(textField, BorderLayout.WEST);
+		contentPane.add(btnSearch, BorderLayout.CENTER);
+		contentPane.setBackground(Color.PINK);
+		// textField.setBounds(50, 13, 220, 20);
+		// btnSearch.setBounds(240, 10, 75, 30);
+
+		scrollPane = new JScrollPane(areaContent);
+		contentPane.add(scrollPane, BorderLayout.CENTER);
+		scrollPane.getVerticalScrollBar().setBackground(purple);
+		scrollPane.getViewport().setBackground(Color.PINK);
+
+		wholePane.add(contentPane, BorderLayout.NORTH);
+		wholePane.add(scrollPane, BorderLayout.CENTER);
+
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		wholePane.updateUI();
+		this.setVisible(true);
+
 	}
+
 }
