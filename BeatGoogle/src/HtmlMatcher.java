@@ -17,7 +17,7 @@ public class HtmlMatcher {
 	private String searchKeyword;
 	private String searchKeyword2;
 	public static ArrayList<WebPage> web;
-	public static String relatedKeyword = "Relative keywords: \n";
+	public static String relatedKeyword = "Related keywords: \n";
 
 	public HtmlMatcher(String kind, String searchKeyword) throws IOException {
 		this.searchKeyword2 = searchKeyword;
@@ -25,23 +25,43 @@ public class HtmlMatcher {
 
 		switch (kind) {
 		case "NBA":
-			this.searchKeyword = searchKeyword + "+NBA+news";
+			if (searchKeyword != "NBA") {
+				this.searchKeyword = searchKeyword + "+NBA+news";
+			} else {
+				this.searchKeyword = searchKeyword + "+news";
+			}
 			nbaMatch();
 			break;
 		case "MLB":
-			this.searchKeyword = searchKeyword + "+MLB+news";
+			if (searchKeyword != "MLB") {
+				this.searchKeyword = searchKeyword + "+MLB+news";
+			} else {
+				this.searchKeyword = searchKeyword + "+news";
+			}
 			mlbMatch();
 			break;
 		case "NFL":
-			this.searchKeyword = searchKeyword + "+NFL+news";
+			if (searchKeyword != "NFL") {
+				this.searchKeyword = searchKeyword + "+NFL+news";
+			} else {
+				this.searchKeyword = searchKeyword + "+news";
+			}
 			nflMatch();
 			break;
 		case "NHL":
-			this.searchKeyword = searchKeyword + "+NHL+news";
+			if (searchKeyword != "NHL") {
+				this.searchKeyword = searchKeyword + "+NHL+news";
+			} else {
+				this.searchKeyword = searchKeyword + "+news";
+			}
 			nhlMatch();
 			break;
 		default:
-			this.searchKeyword = searchKeyword + "+sport+news";
+			if (searchKeyword != "sport") {
+				this.searchKeyword = searchKeyword + "+sport+news";
+			} else {
+				this.searchKeyword = searchKeyword + "+news";
+			}
 			break;
 		}
 		query();
@@ -245,7 +265,7 @@ public class HtmlMatcher {
 	}
 
 	public void fetchRelatedKeyword() throws IOException {
-		this.url = "https://www.google.com.tw/search?q=" + searchKeyword2 + "&oe=utf8num=30";
+		this.url = "https://www.google.com.tw/search?q=" + searchKeyword2 + "&oe=utf8num=10";
 		content = fetchContent();
 		int indexOfOpen = content.indexOf("clear:");
 		if (indexOfOpen == -1) {
@@ -256,8 +276,7 @@ public class HtmlMatcher {
 			int indexOfTitleClose = -1;
 			String title = "";
 			indexOfHtmlClose = content.indexOf(">", indexOfOpen);
-			System.out.print("/");
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 5; i++) {
 				indexOfHtml = content.indexOf("a href=", indexOfHtmlClose);
 				indexOfHtmlClose = content.indexOf(">", indexOfHtml);
 				indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
