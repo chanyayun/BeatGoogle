@@ -28,6 +28,7 @@ public class WebNode {
 		webPage.score += this.nodeScore;
 	}
 
+	//addChild用
 	private String fetchContent() throws IOException {
 		URL url = new URL(this.url);
 		URLConnection conn = url.openConnection();
@@ -44,6 +45,7 @@ public class WebNode {
 		return retVal;
 	}
 
+	//抓子網頁
 	public void addChild() throws IOException {
 		children.add(new WebPage("http://www.sportingnews.com/ca/nba/news", "test1"));
 		children.add(new WebPage("http://www.sportingnews.com/ca/nfl/news", "test2"));
