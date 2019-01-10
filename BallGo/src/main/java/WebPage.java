@@ -37,6 +37,6 @@ public class WebPage {
 
 	@Override
 	public String toString() {
-		return name + " [" + score + "]\n" + url + "\n\n";
+		return name + " [" + score + "]\n" + url + "\n";
 	}
 }
