@@ -15,7 +15,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import java.awt.SystemColor;
-import java.awt.Label;
 
 public class Gui extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -119,25 +118,15 @@ public class Gui extends JFrame implements ActionListener {
 		contentPane.add(textField);
 		textField.setColumns(10);
 
-		/*
-		JLabel lblBallballgo = new JLabel("BallBallGO!");
-		lblBallballgo.setFont(new Font("Corsiva Hebrew", Font.PLAIN, 24));
-		lblBallballgo.setForeground(Color.WHITE);
-		lblBallballgo.setBounds(395, 305, 135, 30);
-		contentPane.add(lblBallballgo);
-		*/
-
 		btnSearch.setBounds(500, 280, 75, 30);
 		contentPane.add(btnSearch);
-		
+
 		JLabel lblImage = new JLabel("");
 		lblImage.setBounds(297, 136, 211, 154);
 		lblImage.setIcon(new ImageIcon(this.getClass().getResource("Ball.png")));
 		contentPane.add(lblImage);
-		
-		
-		btnSearch.addActionListener(this);
 
+		btnSearch.addActionListener(this);
 	}
 
 	@Override
@@ -149,8 +138,11 @@ public class Gui extends JFrame implements ActionListener {
 		String input1 = input;
 		String input2 = "";
 		String text = "";
+		String text2 = "";
 
 		if (!input.isEmpty()) {
+			System.out.print(text);
+			text = text2;
 			while (input1.contains(" ")) {
 				m = input1.indexOf(" ");
 				input2 = input1.substring(m + 1, input1.length());
@@ -158,12 +150,12 @@ public class Gui extends JFrame implements ActionListener {
 
 				keyword.addKeyword(new Keyword(input1, weight, buttonString));
 				text = text + "+" + input1;
-
 				input1 = input2;
 			}
 			keyword.addKeyword(new Keyword(input1, weight, buttonString));
 			text = text + "+" + input1;
 		}
+
 		if (buttonString != "") {
 			keyword.addKeyword(new Keyword(buttonString, weight2, buttonString));
 			if (input.isEmpty()) {
@@ -206,6 +198,7 @@ public class Gui extends JFrame implements ActionListener {
 		textField.setColumns(10);
 		contentPane.add(textField, BorderLayout.WEST);
 		contentPane.add(btnSearch, BorderLayout.CENTER);
+
 		contentPane.setBackground(SystemColor.textHighlight);
 
 		scrollPane = new JScrollPane(areaContent);
