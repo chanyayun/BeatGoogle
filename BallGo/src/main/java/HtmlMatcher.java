@@ -96,16 +96,17 @@ public class HtmlMatcher {
 		Elements lis = document.select("div.g");
 		for (Element li : lis) {
 			try {
-				Element cite = li.select("cite").get(0);
-				String citeUrl = cite.text();
 				Element h3 = li.select("h3.r").get(0);
 				String title = h3.text();
+
+				Element cite = li.getElementsByTag("a").first();
+				String citeUrl = cite.attr("href");
+				citeUrl = citeUrl.substring(7, citeUrl.indexOf("&sa=U&ved"));
 
 				web.add(new WebPage(citeUrl, title));
 			} catch (IndexOutOfBoundsException e) {
 			}
 		}
-
 	}
 
 	public void nbaMatch() throws IOException {
@@ -113,6 +114,8 @@ public class HtmlMatcher {
 		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
 		int indexOfTitleClose = -1;
@@ -120,6 +123,7 @@ public class HtmlMatcher {
 		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
+			indexOfOpen = content.indexOf("info-header", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
 			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
 			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
@@ -152,6 +156,8 @@ public class HtmlMatcher {
 		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
 		int indexOfTitleClose = -1;
@@ -159,6 +165,7 @@ public class HtmlMatcher {
 		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
+			indexOfOpen = content.indexOf("info-header", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
 			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
 			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
@@ -191,6 +198,8 @@ public class HtmlMatcher {
 		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
 		int indexOfTitleClose = -1;
@@ -198,6 +207,7 @@ public class HtmlMatcher {
 		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
+			indexOfOpen = content.indexOf("info-header", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
 			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
 			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
@@ -230,6 +240,8 @@ public class HtmlMatcher {
 		content = fetchContent();
 
 		int indexOfOpen = content.indexOf("collection collection-article-list has-load-more");
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
+		indexOfOpen = content.indexOf("collection collection-article-list has-load-more", indexOfOpen + 1);
 		int indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 		int indexOfHtml = -1;
 		int indexOfTitleClose = -1;
@@ -237,6 +249,7 @@ public class HtmlMatcher {
 		String title = null;
 		for (int i = 0; i < 10; i++) {
 			indexOfOpen = content.indexOf("article class", indexOfHtmlClose);
+			indexOfOpen = content.indexOf("info-header", indexOfHtmlClose);
 			indexOfHtml = content.indexOf("a href=", indexOfOpen);
 			indexOfHtmlClose = content.indexOf(">", indexOfHtml);
 			indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
@@ -276,12 +289,16 @@ public class HtmlMatcher {
 			int indexOfTitleClose = -1;
 			String title = "";
 			indexOfHtmlClose = content.indexOf(">", indexOfOpen);
+			while (relatedKeyword.contains("5") || relatedKeyword.contains("(Not Found)")) {
+				relatedKeyword = "[Related keywords] \n";
+			}
 			for (int i = 0; i < 5; i++) {
 				indexOfHtml = content.indexOf("a href=", indexOfHtmlClose);
 				indexOfHtmlClose = content.indexOf(">", indexOfHtml);
 				indexOfTitleClose = content.indexOf("<", indexOfHtmlClose);
 				title = content.substring(indexOfHtmlClose + 1, indexOfTitleClose);
-				relatedKeyword = relatedKeyword + title + "\n";
+				int k = i + 1;
+				relatedKeyword = relatedKeyword + k + ". " + title + "\n";
 			}
 		}
 	}
