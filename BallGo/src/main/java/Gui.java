@@ -4,7 +4,6 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.JButton;
@@ -25,7 +24,6 @@ public class Gui extends JFrame implements ActionListener {
 	private static final double weight = 20;
 	private static final double weight2 = 2;
 	public Keyword keyword;
-	public ArrayList<Keyword> keywords;
 	public JButton btnSearch = new JButton("Search");
 	public JTextField textField = new JTextField();
 	private JScrollPane scrollPane;
@@ -132,7 +130,6 @@ public class Gui extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		keyword = new Keyword();
-		keywords = new ArrayList<>();
 		String input = textField.getText();
 		int m = input.indexOf(" ");
 		String input1 = input;
@@ -140,9 +137,9 @@ public class Gui extends JFrame implements ActionListener {
 		String text = "";
 		String text2 = "";
 
-		//接收使用者輸入 
-		//有超過一個關鍵字ex:aaa bbb 會把它分成兩個keyword 轉成aaa+bbb的text
-		//text是用在google搜尋裡
+		// 接收使用者輸入
+		// 有超過一個關鍵字ex:aaa bbb 會把它分成兩個keyword 轉成aaa+bbb的text
+		// text是用在google搜尋裡
 		if (!input.isEmpty()) {
 			System.out.print(text);
 			text = text2;
@@ -159,9 +156,9 @@ public class Gui extends JFrame implements ActionListener {
 			text = text + "+" + input1;
 		}
 
-		//按按鈕 將buttonString(NBA/NFl...)加入keyword 
-		//若沒有按按鈕則加入sport
-		//若沒有使用者輸入則將text設為buttonString
+		// 按按鈕 將buttonString(NBA/NFl...)加入keyword
+		// 若沒有按按鈕則加入sport
+		// 若沒有使用者輸入則將text設為buttonString
 		if (buttonString != "") {
 			keyword.addKeyword(new Keyword(buttonString, weight2, buttonString));
 			if (input.isEmpty()) {
@@ -174,17 +171,16 @@ public class Gui extends JFrame implements ActionListener {
 			}
 		}
 
-		keywords = keyword.keywords;
-		//到Google或各網頁搜尋 抓出網頁清單
+		// 到Google或各網頁搜尋 抓出網頁清單
 		try {
 			new HtmlMatcher(buttonString, text);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		//算分數、排序 得到最終結果
+		// 算分數、排序 得到最終結果
 		WebList news = null;
 		try {
-			news = new WebList(keywords);
+			news = new WebList(keyword.keywords);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -194,7 +190,7 @@ public class Gui extends JFrame implements ActionListener {
 		areaContent.setLineWrap(true);
 		areaContent.setColumns(10);
 
-		areaContent.setText(HtmlMatcher.relatedKeyword + "\n[Suggested Result]\n" + news.sort());
+		areaContent.setText(HtmlMatcher.relatedKeyword + news.sort());
 
 		wholePane = new JPanel();
 		wholePane.setLayout(new BorderLayout());
@@ -220,6 +216,5 @@ public class Gui extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		wholePane.updateUI();
 		this.setVisible(true);
-
 	}
 }
