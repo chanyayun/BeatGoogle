@@ -3,8 +3,8 @@ import java.util.ArrayList;
 
 public class WebList {
 	public WebNode root;
-	public ArrayList<String> subPages;
-	public ArrayList<WebPage> webList;
+	public ArrayList<String> subPages; //每個子網頁轉成的string
+	public ArrayList<WebPage> webList; //每個母網頁
 
 	public WebList(ArrayList<Keyword> keywords) throws IOException {
 		webList = new ArrayList<>();
@@ -23,8 +23,10 @@ public class WebList {
 	}
 
 	public String sort() {
+		//照分數排序
 		webList = doQuickSort(webList);
 
+		//將結果列出
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < webList.size() && i < 15; i++) {
 			if (i > 0) {
