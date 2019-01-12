@@ -290,6 +290,7 @@ public class HtmlMatcher {
 			String title = "";
 			indexOfHtmlClose = content.indexOf(">", indexOfOpen);
 			while (relatedKeyword.contains("5") || relatedKeyword.contains("(Not Found)")) {
+				indexOfOpen = content.indexOf("clear:");
 				relatedKeyword = "[Related keywords] \n";
 			}
 			for (int i = 0; i < 5; i++) {
