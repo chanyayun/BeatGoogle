@@ -13,6 +13,7 @@ public class WebPage {
 		this.counter = new KeywordCounter(url);
 	}
 
+	//設置網頁分數 用KeywordCounter 再做額外加權
 	public void setScore(ArrayList<Keyword> keywords) {
 		  this.score = 0;
 
