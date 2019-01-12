@@ -14,9 +14,9 @@ import org.jsoup.select.Elements;
 public class HtmlMatcher {
 	private String url;
 	private String content;
-	private String searchKeyword;
-	private String searchKeyword2;
-	public static ArrayList<WebPage> web;
+	private String searchKeyword; //使用者輸入的關鍵字 在construct的時候加上NBA/...和news 是Google搜尋網頁時用的字串
+	private String searchKeyword2; //使用者輸入的關鍵字 是查Google相關關鍵字用
+	public static ArrayList<WebPage> web; //Google跟內建網站裡搜尋找到的各個網頁 還未排序算分
 	public static String relatedKeyword = "[Related keywords] \n";
 
 	public HtmlMatcher(String kind, String searchKeyword) throws IOException {
@@ -30,7 +30,7 @@ public class HtmlMatcher {
 			} else {
 				this.searchKeyword = searchKeyword + "+news";
 			}
-			nbaMatch();
+			nbaMatch(); //在內建網站的搜尋
 			break;
 		case "MLB":
 			if (searchKeyword != "MLB") {
@@ -64,8 +64,8 @@ public class HtmlMatcher {
 			}
 			break;
 		}
-		query();
-		fetchRelatedKeyword();
+		query(); //在Google的搜尋
+		fetchRelatedKeyword(); //查Google推薦相關關鍵字
 	}
 
 	private String fetchContent() throws IOException {
