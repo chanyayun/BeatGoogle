@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,19 +15,19 @@ import org.jsoup.select.Elements;
 
 public class WebNode {
 	public WebPage webPage;
-	public ArrayList<WebPage> children;
-	public double nodeScore;
+	public Set<WebPage> children;
+	public double nodeScore; //子網頁的分數總和
 	private String url;
 	public String content;
-	public String subPage = "\tSubPages:\n";
+	public String subPage = "\tSubPages:\n"; //將子網頁寫成字串
 
-	public WebNode(WebPage webPage) throws IOException {
+	public WebNode(WebPage webPage) throws IOException { //建立每個屬於母網頁的webnode webnode包含母網頁和子網頁
 		this.webPage = webPage;
-		this.children = new ArrayList<WebPage>();
+		this.children = new HashSet<WebPage>();
 		addChild();
 	}
 
-	public void setNodeScore(ArrayList<Keyword> keywords) throws IOException {
+	public void setNodeScore(ArrayList<Keyword> keywords) throws IOException { //計算分數 將子網頁的字串寫出來
 		webPage.setScore(keywords);
 		for (WebPage child : children) {
 			child.setScore(keywords);
@@ -54,31 +56,23 @@ public class WebNode {
 		return retVal;
 	}
 
-	public void addChild() throws IOException {
-//		this.url = webPage.url;
-//		this.content = fetchContent();
-//
-//		Document document = Jsoup.parse(this.content);
-//		Elements lis = document.select("div.g");
-//		for (Element li : lis) {
-//			try {
-//				Element cite = li.select("cite").get(0);
-//				String citeUrl = cite.text();
-//				Element h3 = li.select("h3.r").get(0);
-//				String title = h3.text();
-		for (int i = 0; i < 3; i++) {
-			String citeUrl = "https://www.foxnews.com/category/sports/nba.html";
-			String title = "sub";
+	public void addChild() throws IOException { //加入子網頁
+		this.url = webPage.url;
+		this.content = fetchContent();
 
-				if (citeUrl.length() > 40) {
-					children.add(new WebPage(citeUrl, title));
-				}
-				if (children.size() >= 3) {
-					break;
-				}
+		Document document = Jsoup.connect(url).get();
+		Elements lis = document.select("a[href]");
+
+		for (Element li : lis) {
+			String citeUrl = li.attr("href");
+			if (citeUrl.charAt(0) == '/' && citeUrl.length() > 40) {
+				citeUrl = li.attr("abs:href");
+				String title = li.text();
+				children.add(new WebPage(citeUrl, title));
+			}
+			if (children.size() == 3) {
+				break;
+			}
 		}
-//			} catch (IndexOutOfBoundsException e) {
-//			}
-//		}
 	}
 }
