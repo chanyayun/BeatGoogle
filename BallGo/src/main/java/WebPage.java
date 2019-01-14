@@ -13,19 +13,18 @@ public class WebPage {
 		this.counter = new KeywordCounter(url);
 	}
 
-	//設置網頁分數 用KeywordCounter 再做額外加權
 	public void setScore(ArrayList<Keyword> keywords) {
 		  this.score = 0;
 
 		  try {
 		   for (Keyword k : keywords) {
 		    if (url.length() > 50) {
-		     this.score += counter.countKeyword(k.name) * k.weight * 8;
+		     this.score += counter.countKeyword(k.name) * k.weight * 1;
 		     if (url.contains("sportingnews")) {
-		      this.score *= 0.5;
+		      this.score *= 5;
 		     }
 		      else if (url.contains("foxnews")) {
-		      this.score *= 0.8;
+		      this.score *= 5;
 		     }
 		    } else {
 		     this.score += counter.countKeyword(k.name) * k.weight;
