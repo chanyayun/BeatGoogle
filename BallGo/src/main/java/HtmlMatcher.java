@@ -14,13 +14,13 @@ import org.jsoup.select.Elements;
 public class HtmlMatcher {
 	private String url;
 	private String content;
-	private String searchKeyword; //使用者輸入的關鍵字 在construct的時候加上NBA/...和news 是Google搜尋網頁時用的字串
-	private String searchKeyword2; //使用者輸入的關鍵字 是查Google相關關鍵字用
-	public static ArrayList<WebPage> web; //Google跟內建網站裡搜尋找到的各個網頁 還未排序算分
-	public static String relatedKeyword = "[Related keywords] \n";
+	private String searchKeyword; // 使用者輸入的關鍵字 在construct的時候加上NBA/...和news 是Google搜尋網頁時用的字串
+	private String searchKeyword2; // 使用者輸入的關鍵字 是查Google相關關鍵字用
+	public static ArrayList<WebPage> web; // Google跟內建網站裡搜尋找到的各個網頁 還未排序算分
+	public static String relatedKeyword = "[Related keywords]\n";
 
 	public HtmlMatcher(String kind, String searchKeyword) throws IOException {
-		this.searchKeyword2 = searchKeyword;
+		this.searchKeyword2 = searchKeyword + kind;
 		web = new ArrayList<>();
 
 		switch (kind) {
@@ -30,7 +30,7 @@ public class HtmlMatcher {
 			} else {
 				this.searchKeyword = searchKeyword + "+news";
 			}
-			nbaMatch(); //在內建網站的搜尋
+			nbaMatch(); // 在內建網站的搜尋
 			break;
 		case "MLB":
 			if (searchKeyword != "MLB") {
@@ -64,8 +64,8 @@ public class HtmlMatcher {
 			}
 			break;
 		}
-		query(); //在Google的搜尋
-		fetchRelatedKeyword(); //查Google推薦相關關鍵字
+		query(); // 在Google的搜尋
+		fetchRelatedKeyword(); // 查Google推薦相關關鍵字
 	}
 
 	private String fetchContent() throws IOException {
@@ -100,11 +100,14 @@ public class HtmlMatcher {
 				String title = h3.text();
 
 				Element cite = li.getElementsByTag("a").first();
-				String citeUrl = cite.attr("href");
-				citeUrl = citeUrl.substring(7, citeUrl.indexOf("&sa=U&ved"));
+				String citeUrl = "https://www.google.com.tw"+ cite.attr("href");
+//				String citeUrl = cite.attr("href");
+//				citeUrl = citeUrl.substring(7, citeUrl.indexOf("&sa=U&ved"));
 
 				web.add(new WebPage(citeUrl, title));
+				
 			} catch (IndexOutOfBoundsException e) {
+				
 			}
 		}
 	}
