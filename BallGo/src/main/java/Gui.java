@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Date;
 
 import javax.swing.*;
 import javax.swing.JButton;
@@ -14,6 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import java.awt.SystemColor;
+import java.awt.Font;
 
 public class Gui extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -28,6 +30,7 @@ public class Gui extends JFrame implements ActionListener {
 	public JTextField textField = new JTextField();
 	private JScrollPane scrollPane;
 	private JPanel wholePane;
+	public Date date = new Date();
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -46,7 +49,7 @@ public class Gui extends JFrame implements ActionListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 700);
 		contentPane = new JPanel();
-		contentPane.setBackground(SystemColor.textHighlight);
+		contentPane.setBackground(new Color(255, 228, 181));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
@@ -125,6 +128,15 @@ public class Gui extends JFrame implements ActionListener {
 		contentPane.add(lblImage);
 
 		btnSearch.addActionListener(this);
+		
+		/*
+		JTextArea txtrSearching = new JTextArea();
+		txtrSearching.setBounds(289, 363, 211, 86);
+		txtrSearching.setBackground(new Color(255, 228, 181));
+		txtrSearching.setText("Start Searching......\n" + date.toString());
+		contentPane.add(txtrSearching);
+		*/
+
 	}
 
 	@Override
@@ -137,28 +149,24 @@ public class Gui extends JFrame implements ActionListener {
 		String text = "";
 		String text2 = "";
 
-		// 接收使用者輸入
-		// 有超過一個關鍵字ex:aaa bbb 會把它分成兩個keyword 轉成aaa+bbb的text
-		// text是用在google搜尋裡
 		if (!input.isEmpty()) {
-			System.out.print(text);
-			text = text2;
-			while (input1.contains(" ")) {
-				m = input1.indexOf(" ");
-				input2 = input1.substring(m + 1, input1.length());
-				input1 = input1.substring(0, m);
+			while (!text.equals("")) {
+				text = text2;
+				while (input1.contains(" ")) {
+					m = input1.indexOf(" ");
+					input2 = input1.substring(m + 1, input1.length());
+					input1 = input1.substring(0, m);
 
-				keyword.addKeyword(new Keyword(input1, weight, buttonString));
-				text = text + "+" + input1;
-				input1 = input2;
+					keyword.addKeyword(new Keyword(input1, weight, buttonString));
+					text = text + "+" + input1;
+					input1 = input2;
+				}
 			}
 			keyword.addKeyword(new Keyword(input1, weight, buttonString));
 			text = text + "+" + input1;
+
 		}
 
-		// 按按鈕 將buttonString(NBA/NFl...)加入keyword
-		// 若沒有按按鈕則加入sport
-		// 若沒有使用者輸入則將text設為buttonString
 		if (buttonString != "") {
 			keyword.addKeyword(new Keyword(buttonString, weight2, buttonString));
 			if (input.isEmpty()) {
@@ -171,22 +179,24 @@ public class Gui extends JFrame implements ActionListener {
 			}
 		}
 
-		// 到Google或各網頁搜尋 抓出網頁清單
 		try {
 			new HtmlMatcher(buttonString, text);
+
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		// 算分數、排序 得到最終結果
+
 		WebList news = null;
+
 		try {
 			news = new WebList(keyword.keywords);
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
 		areaContent = new JTextArea();
-		areaContent.setBackground(SystemColor.textHighlight);
+		areaContent.setBackground(new Color(255, 228, 181));
 		areaContent.setLineWrap(true);
 		areaContent.setColumns(10);
 
